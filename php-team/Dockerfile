@@ -1,8 +1,8 @@
 ###
-# Based on https://github.com/ambientum/ambientum/blob/master/php/7.4/Dockerfile
+# Based on https://github.com/ambientum/ambientum/blob/master/php/7.3/Dockerfile
 # with some unused features removed
 #
-FROM alpine:3.9
+FROM alpine:3.8
 
 # Repository/Image Maintainer
 LABEL maintainer="Ben Bjurstrom <bbjurstrom@gmail.com>"
@@ -28,15 +28,17 @@ ADD bashrc /home/bashrc
 RUN echo "---> Enabling PHP-Alpine" && \
     apk add --update wget && \
     wget -O /etc/apk/keys/php-alpine.rsa.pub https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/v3.9/main" > /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/v3.9/community" >> /etc/apk/repositories && \
-    echo "https://dl.bintray.com/php-alpine/v3.9/php-7.4" >> /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.8/main" > /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.8/community" >> /etc/apk/repositories && \
+    echo "https://dl.bintray.com/php-alpine/v3.8/php-7.3" >> /etc/apk/repositories && \
     apk add --update \
     curl \
     bash \
     vim \
     git \
+    pdftk \
     unzip \
+    yarn \
     sudo && \
     echo "---> Preparing and Installing PHP" && \
     apk add --update \
@@ -67,6 +69,7 @@ RUN echo "---> Enabling PHP-Alpine" && \
     php-zip \
     php-zlib \
     php-pcntl \
+    php-ctype \
     php-phpdbg && \
     sudo ln -s /usr/bin/php7 /usr/bin/php && \
     sudo ln -s /usr/bin/php-cgi7 /usr/bin/php-cgi && \
@@ -100,7 +103,6 @@ RUN echo "---> Enabling PHP-Alpine" && \
     sed -i "/error_log = .*/c\error_log = /proc/self/fd/2" /etc/php7/php-fpm.conf && \
     sed -i "/post_max_size = .*/c\post_max_size = 1000M" /etc/php7/php.ini && \
     sed -i "/upload_max_filesize = .*/c\upload_max_filesize = 1000M" /etc/php7/php.ini && \
-    sed -i "/memory_limit = .*/c\memory_limit = 1280M" /etc/php7/php.ini && \
     sed -i "/zend_extension=xdebug/c\;zend_extension=xdebug" /etc/php7/conf.d/00_xdebug.ini && \
     echo "---> Adding Support for NewRelic" && \
     mkdir /tmp/newrelic && \
@@ -127,8 +129,5 @@ WORKDIR "/var/www"
 # Environment variables
 ENV PATH=/home/ambientum/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# Define the entry point that tries to enable newrelic
-ENTRYPOINT ["/tini", "--", "/scripts/start.sh"]
-
-# As non daemon and single base image, it may be used as cli container
-CMD ["/bin/bash"]
+# Run init.sh
+ENTRYPOINT ["/bin/sh", "/scripts/start.sh"]
