@@ -1,5 +1,5 @@
 ###
-# Based on https://github.com/ambientum/ambientum/blob/master/php/7.3/Dockerfile
+# Based on https://github.com/ambientum/ambientum/blob/master/php/7.4/Dockerfile
 # with some unused features removed
 #
 FROM alpine:3.9
@@ -30,7 +30,7 @@ RUN echo "---> Enabling PHP-Alpine" && \
     wget -O /etc/apk/keys/php-alpine.rsa.pub https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub && \
     echo "http://dl-cdn.alpinelinux.org/alpine/v3.9/main" > /etc/apk/repositories && \
     echo "http://dl-cdn.alpinelinux.org/alpine/v3.9/community" >> /etc/apk/repositories && \
-    echo "https://dl.bintray.com/php-alpine/v3.9/php-7.3" >> /etc/apk/repositories && \
+    echo "https://dl.bintray.com/php-alpine/v3.9/php-7.4" >> /etc/apk/repositories && \
     apk add --update \
     curl \
     bash \
